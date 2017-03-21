@@ -16,18 +16,15 @@ import random
 
 '''print_board(board) takes a board and then gives all the print statements needed to print out the full board.'''
 def print_board(board):
-
     # for loop for rows
-    for i in range(0,4):
-        print "|--------------|--------------|--------------|--------------|"
-
+    for i in range(0,len(board)):
+        print "|--------------"*len(board[0])+"|"
         #for loop for row parts
         for k in range(0,6):
             print'|',
-
             #for loop for columns
-            for j in range(0,4):
-                sqr_num=j+i*4
+            for j in range(0,len(board[0])):
+                sqr_num=j+i*len(board[0])
                 if k==0:
                     if sqr_num<10:
                         print '',sqr_num,
@@ -36,12 +33,10 @@ def print_board(board):
                 else:
                     print '  ',
                 print print_piece(board[i][j],k),'|',
-
             #new line after each row part
             print '\n',
-
     #line at bottom of board
-    print "|--------------|--------------|--------------|--------------|"
+    print "|--------------"*len(board[0])+"|"
 
 '''print_piece(piece, line) will return the string that is to be displayed as the 'line'th line of 'piece' piece.'''
 def print_piece(piece, line):
