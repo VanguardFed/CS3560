@@ -13,7 +13,6 @@
 
 import random
 
-
 '''print_board(board) takes a board and then gives all the print statements needed to print out the full board.'''
 def print_board(board):
     # for loop for rows
@@ -65,6 +64,9 @@ def print_piece(piece, line):
     else:
         return "         "
 
+def create_board(n):
+    return [['#' for col in range(int(n))] for row in range(int(n))]
+
 '''who_won(board) will return either 'x' or 'o' if either has a winning position, otherwise it will return '#'.'''
 def who_won(board):
     if board[0][0]==board[1][1]==board[2][2]==board[3][3] and board[0][0]!='#':
@@ -80,37 +82,51 @@ def who_won(board):
 
 '''move(board, sq, marker) will alter the board 'board' at square 'sq' to marker 'marker'.'''
 def move(board,sq,marker):
-    if sq<4 and board[0][sq]=='#':
-        board[0][sq]=marker
-        return True
-    elif sq<8 and sq>=4 and board[1][sq-4]=='#':
-        board[1][sq-4]=marker
-        return True
-    elif sq<12 and sq>=8 and board[2][sq-8]=='#':
-        board[2][sq-8]=marker
-        return True
-    elif sq<16 and sq>=12 and board[3][sq-12]=='#':
-        board[3][sq-12]=marker
-        return True
-    else:
-        print "ERROR: Invalid input"
-        return False
+    num=len(board)
+    board[sq/num][sq%num]=marker
+##    if sq<4 and board[0][sq]=='#':
+##        board[0][sq]=marker
+##        return True
+##    elif sq<8 and sq>=4 and board[1][sq-4]=='#':
+##        board[1][sq-4]=marker
+##        return True
+##    elif sq<12 and sq>=8 and board[2][sq-8]=='#':
+##        board[2][sq-8]=marker
+##        return True
+##    elif sq<16 and sq>=12 and board[3][sq-12]=='#':
+##        board[3][sq-12]=marker
+##        return True
+##    else:
+##        print "ERROR: Invalid input"
+##        return False
 
 '''print_help(turn,players) will print a diagram of which numbers \
 corespond to which squares as well as who's turn it is.'''
-def print_help(turn,players):
-    line="-------------------\n"
-    print"  0 |  1 |  2 |  3 \n"+line+"  4 |  5 |  6 |  7 \n"+line+"  8 |  9 | 10 | 11 \n"+line+" 12 | 13 | 14 | 15 \n"
+def print_help(turn,players,board):
+    num=len(board)
+    line="\n"+"------"*num
+    for i in range(0,num):
+        for j in range(0,num):
+            sq=i*num+j%num
+            if sq<10:
+                print "  "+str(sq),
+            else:
+                print " "+str(sq),
+            if sq%num!=num-1: print '|',
+        if i<num-1: print line
+    #print"  0 |  1 |  2 |  3 \n"+line+"  4 |  5 |  6 |  7 \n"+line+"  8 |  9 | 10 | 11 \n"+line+" 12 | 13 | 14 | 15 \n"
     if turn=='x':
         player=players[0]
     else:
         player=players[1]
-    print"It is "+player+"'s turn.\n"
+    print"\nIt is "+player+"'s turn.\n"
 
 '''play() will start and maintain a game of tic-tac-toe'''
 def play():
     #game set up
-    ingame_board=[['#' for col in range(4)] for row in range(4)]
+    rows=4
+    columns=4
+    #ingame_board=create_board(rows,columns)
     ingame_turn='x'
     ingame_players=["player1","player2"]
     player0_wins=0
@@ -131,8 +147,33 @@ def play():
         ingame_turn=save[6]
         savefile.close()
     else:
+        #get player names
         ingame_players[0]=raw_input("Name of first player: ")
         ingame_players[1]=raw_input("Name of second player: ")
+##        #get number of rows and columns
+##        choosing=True
+##        while(choosing):
+##            tmp_rows=raw_input("Number of rows: ")
+##            try:
+##                if int(tmp_rows)>=3 and int(tmp_rows)<=100:
+##                    rows=tmp_rows
+##                    choosing=False
+##                else:
+##                    print "ERROR: Enter a number between 3 and 100"
+##            except:
+##                print "ERROR: Enter an integer"
+##        choosing=True
+##        while(choosing):
+##            tmp_cols=raw_input("Number of columns: ")
+##            try:
+##                if int(tmp_cols)>=3 and int(tmp_cols)<=100:
+##                    columns=tmp_cols
+##                    choosing=False
+##                else:
+##                    print "ERROR: Enter a number between 3 and 100"
+##            except:
+##                print "ERROR: Enter an integer"
+##        ingame_board=create_board(rows,columns)
         playerX=random.choice(ingame_players)
         if playerX==ingame_players[0]:
             playerO=ingame_players[1]
@@ -143,27 +184,39 @@ def play():
     #main game loop
     quit=False
     while not quit:
+        #get number of rows and columns
+        choosing=True
+        while(choosing):
+            tmp_num=raw_input("Number of rows and columns: ")
+            try:
+                if int(tmp_num)>=3 and int(tmp_num)<=100:
+                    num=tmp_num
+                    choosing=False
+                else:
+                    print "ERROR: Enter a number between 3 and 100"
+            except:
+                print "ERROR: Enter an integer"
+        ingame_board=create_board(num)
         while who_won(ingame_board)=='#':
             active_turn=True
             while active_turn:
+                num=len(ingame_board)
                 choice=raw_input()
                 try:
                     choice=int(choice)
                     #make a move
-                    if choice>=0 and choice<=15:
+                    if choice>=0 and choice<=num*num-1:
                         if move(ingame_board,choice,ingame_turn):
                             active_turn=False
                     else:
                         print "ERROR: Enter a number between 0 and 15"
                 except:
-                    if len(choice)>1:
-                        print "ERROR: Only submit a single character"
-                    elif choice.lower()=='p':
+                    if choice.lower()=='p':
                         #print baord
                         print_board(ingame_board)
                     elif choice.lower()=='h':
                         #run help
-                        print_help(ingame_turn,ingame_players)
+                        print_help(ingame_turn,ingame_players,ingame_board)
                     elif choice.lower()=='s':
                         #save game
                         filename=raw_input("Enter the name of the save file: ")
@@ -179,7 +232,7 @@ def play():
                         save.close()
                     elif choice.lower()=='r':
                         #resign game
-                        for i in range(0,4):
+                        for i in range(0,num):
                             ingame_board[0][i]=ingame_turn
                         active_turn=False
                     elif choice.lower()=='q':
@@ -197,8 +250,8 @@ def play():
                               "    enter 'q' to quit without saving\n"
             #check for draw
             counter=0
-            for i in range(0,4):
-                for j in range(0,4):
+            for i in range(0,num):
+                for j in range(0,num):
                     if ingame_board[i][j]=='#':
                         counter+=1
             if counter==0:
