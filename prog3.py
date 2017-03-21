@@ -1,30 +1,30 @@
-#******************************************************************* 
-#                                                                    
-#  Program:     Project 3                                            
-#                                                                     
+#*******************************************************************
+#
+#  Program:     Project 3
+#
 #  Author:      Trent Thompson
 #  Email:       tt948912@ohio.edu
-#                                                                    
-#  Description: brief description of the program                    
-#                                                                    
+#
+#  Description: brief description of the program
+#
 #  Date:        Febuary 28, 2017
-#                                                                    
+#
 #*******************************************************************
 
 import random
 
-default_board=[['#' for col in range(4)] for row in range(4)]
 
+'''print_board(board) takes a board and then gives all the print statements needed to print out the full board.'''
 def print_board(board):
-    
+
     # for loop for rows
     for i in range(0,4):
         print "|--------------|--------------|--------------|--------------|"
-        
+
         #for loop for row parts
         for k in range(0,6):
             print'|',
-            
+
             #for loop for columns
             for j in range(0,4):
                 sqr_num=j+i*4
@@ -36,13 +36,14 @@ def print_board(board):
                 else:
                     print '  ',
                 print print_piece(board[i][j],k),'|',
-                
+
             #new line after each row part
             print '\n',
-            
+
     #line at bottom of board
     print "|--------------|--------------|--------------|--------------|"
 
+'''print_piece(piece, line) will return the string that is to be displayed as the 'line'th line of 'piece' piece.'''
 def print_piece(piece, line):
     #the X piece dictionary
     x_dic={
@@ -69,6 +70,7 @@ def print_piece(piece, line):
     else:
         return "         "
 
+'''who_won(board) will return either 'x' or 'o' if either has a winning position, otherwise it will return '#'.'''
 def who_won(board):
     if board[0][0]==board[1][1]==board[2][2]==board[3][3] and board[0][0]!='#':
         return board[0][0]
@@ -81,18 +83,7 @@ def who_won(board):
             return board[i][0]
     return '#'
 
-def translate(board,sq):
-    if sq<4:
-        return board[0][sq]
-    elif sq<8:
-        return board[1][sq-4]
-    elif sq<12:
-        return board[2][sq-8]
-    elif sq<16:
-        return board[3][sq-12]
-    else:
-        return '#'
-
+'''move(board, sq, marker) will alter the board 'board' at square 'sq' to marker 'marker'.'''
 def move(board,sq,marker):
     if sq<4 and board[0][sq]=='#':
         board[0][sq]=marker
@@ -110,6 +101,8 @@ def move(board,sq,marker):
         print "ERROR: Invalid input"
         return False
 
+'''print_help(turn,players) will print a diagram of which numbers \
+corespond to which squares as well as who's turn it is.'''
 def print_help(turn,players):
     line="-------------------\n"
     print"  0 |  1 |  2 |  3 \n"+line+"  4 |  5 |  6 |  7 \n"+line+"  8 |  9 | 10 | 11 \n"+line+" 12 | 13 | 14 | 15 \n"
@@ -119,16 +112,6 @@ def print_help(turn,players):
         player=players[1]
     print"It is "+player+"'s turn.\n"
 
-def play_next_move(board,turn):
-    moving=True
-    while moving==True:
-        square=input(turn+"'s move, enter the square to take: ")
-        if square>=0 and square<=15 and translate(board,square)=='#':
-            move(board,square,turn)
-            moving=False
-        else:
-            print "ERROR:",square,"is not a valid square, try again."
-
 def change_turn(turn):
     if turn=='x':
         return 'o'
@@ -137,21 +120,35 @@ def change_turn(turn):
 
 def play():
     #game set up
+    ingame_board=[['#' for col in range(4)] for row in range(4)]
+    ingame_turn='x'
     ingame_players=["player1","player2"]
-    save=raw_input("Do you want to load a saved game? (y/n): ").lower()
-    if save.lower()=='y':
+    player0_wins=0
+    player1_wins=0
+    draws=0
+    savegame=raw_input("Do you want to load a saved game? (y/n): ").lower()
+    if savegame.lower()=='y':
+        #load saved game
         filename=raw_input("Enter the name of the save file: ")
-        save=open(filename)
-        #LOAD SAVE FILE HERE
-        print "ok"
+        savefile=open(filename,'r')
+        save=savefile.read().splitlines()
+        ingame_players[0]=save[0]
+        ingame_players[1]=save[1]
+        player0_wins=eval(save[2])
+        player1_wins=eval(save[3])
+        draws=eval(save[4])
+        ingame_board=eval(save[5])
+        ingame_turn=save[6]
+        savefile.close()
     else:
         ingame_players[0]=raw_input("Name of first player: ")
         ingame_players[1]=raw_input("Name of second player: ")
         playerX=random.choice(ingame_players)
-        ingame_turn='x'
-        ingame_board=default_board
-        player0_wins=0
-        player1_wins=0
+        if playerX==ingame_players[0]:
+            playerO=ingame_players[1]
+        else:
+            playerO=ingame_players[0]
+
 
     #main game loop
     quit=False
@@ -160,30 +157,55 @@ def play():
             active_turn=True
             while active_turn:
                 choice=raw_input()
-                if choice.lower()=='p':
-                    print_board(ingame_board)
-                elif choice.lower()=='h':
-                    print_help(ingame_turn,ingame_players)
-                elif type(eval(choice))==int:
-                    if eval(choice)>=0 and eval(choice)<=15:
-                        if move(ingame_board,eval(choice),ingame_turn):
+                try:
+                    choice=int(choice)
+                    #make a move
+                    if choice>=0 and choice<=15:
+                        if move(ingame_board,choice,ingame_turn):
                             active_turn=False
                     else:
                         print "ERROR: Enter a number between 0 and 15"
-                elif choice.lower()=='s':
-                    #SAVE GAME HERE
-                    print'ok'
-                elif choice.lower()=='r':
-                    for i in range(0,4):
-                        ingame_board[0][i]=change_turn(ingame_turn)
-                    active_turn=False
-                elif choice.lower()=='q':
-                    quit=True
-                    active_turn=False
-                    return
-                else:
-                    print "ERROR: Invalid command/n"+"    Enter 'p' to print the board\n"+"    Enter 'h' to see square numbers and current turn\n"+"    Enter a number between 0 and 15 to play a piece in the square of the number you entered\n"+"    Enter 's' to save the game\n"+"    Enter 'r' to resign\n"+"    enter 'q' to quit without saving\n"
-            #play_next_move(ingame_board,ingame_turn)
+                except:
+                    if len(choice)>1:
+                        print "ERROR: Only submit a single character"
+                    elif choice.lower()=='p':
+                        #print baord
+                        print_board(ingame_board)
+                    elif choice.lower()=='h':
+                        #run help
+                        print_help(ingame_turn,ingame_players)
+                    elif choice.lower()=='s':
+                        #save game
+                        filename=raw_input("Enter the name of the save file: ")
+                        open(filename,'w')
+                        save=open(filename,'w')
+                        save.write(ingame_players[0]+'\n')
+                        save.write(ingame_players[1]+'\n')
+                        save.write(str(player0_wins)+'\n')
+                        save.write(str(player1_wins)+'\n')
+                        save.write(str(draws)+'\n')
+                        save.write(str(ingame_board)+'\n')
+                        save.write(ingame_turn+'\n')
+                        save.close()
+                    elif choice.lower()=='r':
+                        #resign game
+                        for i in range(0,4):
+                            ingame_board[0][i]=ingame_turn
+                        active_turn=False
+                    elif choice.lower()=='q':
+                        #quit game
+                        quit=True
+                        active_turn=False
+                        return
+                    else:
+                        print "ERROR: Invalid command\n"+\
+                              "    Enter 'p' to print the board\n"+\
+                              "    Enter 'h' to see square numbers and current turn\n"+\
+                              "    Enter a number between 0 and 15 to play a piece in the square of the number you entered\n"+\
+                              "    Enter 's' to save the game\n"+\
+                              "    Enter 'r' to resign\n"+\
+                              "    enter 'q' to quit without saving\n"
+            #check for draw
             counter=0
             for i in range(0,4):
                 for j in range(0,4):
@@ -191,27 +213,33 @@ def play():
                         counter+=1
             if counter==0:
                 break
-            ingame_turn=change_turn(ingame_turn)
 
+            #change turns
+            if ingame_turn=='x':
+                ingame_turn='o'
+            elif ingame_turn=='o':
+                ingame_turn='x'
+                
+        #playerX congrats
         if who_won(ingame_board)=='x':
             print "Game over,",playerX,"has won the game."
-            ingame_board=default_board
             if playerX==ingame_players[0]:
                 player0_wins+=1
             else:
                 player1_wins+=1
-            
-            
+
+        #playerO congrats
         elif who_won(ingame_board)=='o':
             print "Game over,",playerO,"has won the game."
-            ingame_board=default_board
             if playerO==ingame_players[0]:
-                playerO_wins+=1
+                player0_wins+=1
             else:
                 player1_wins+=1
         else:
             print "Game over, draw."
-            ingame_board=default_board
-        
+            draws+=1
+        ingame_turn='x'
+        ingame_board=[['#' for col in range(4)] for row in range(4)]
+
 #GAME STARTER
 play()
