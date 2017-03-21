@@ -112,12 +112,7 @@ def print_help(turn,players):
         player=players[1]
     print"It is "+player+"'s turn.\n"
 
-def change_turn(turn):
-    if turn=='x':
-        return 'o'
-    if turn=='o':
-        return 'x'
-
+'''play() will start and maintain a game of tic-tac-toe'''
 def play():
     #game set up
     ingame_board=[['#' for col in range(4)] for row in range(4)]
