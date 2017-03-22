@@ -65,40 +65,43 @@ def print_piece(piece, line):
         return "         "
 
 def create_board(n):
-    return [['#' for col in range(int(n))] for row in range(int(n))]
+    return [['#' for i in range(int(n))] for i in range(int(n))]
 
 '''who_won(board) will return either 'x' or 'o' if either has a winning position, otherwise it will return '#'.'''
 def who_won(board):
-    if board[0][0]==board[1][1]==board[2][2]==board[3][3] and board[0][0]!='#':
-        return board[0][0]
-    elif board[0][3]==board[1][2]==board[2][1]==board[3][0] and board[0][3]!='#':
-        return board[0][0]
-    for i in range(0,4):
-        if board[i][0]==board[i][1]==board[i][2]==board[i][3] and board[i][0]!='#':
-            return board[i][0]
-        elif board[0][i]==board[1][i]==board[2][i]==board[3][i] and board[0][i]!='#':
-            return board[i][0]
+    num=len(board)
+    for i in range(0,num):
+        for j in range(0,num):
+            try:
+                if board[i][j]!=board[i][j+1]:
+                    break
+            except:
+                return board[i][j]
+            try:
+                if board[j][i]!=board[j+1][i]:
+                    break
+            except:
+                return board[j][i]
+            try:
+                if board[i][i]!=board[i+1][i+1]:
+                    break
+            except:
+                return board[i][i]
+##    if board[0][0]==board[1][1]==board[2][2]==board[3][3] and board[0][0]!='#':
+##        return board[0][0]
+##    elif board[0][3]==board[1][2]==board[2][1]==board[3][0] and board[0][3]!='#':
+##        return board[0][0]
+##    for i in range(0,4):
+##        if board[i][0]==board[i][1]==board[i][2]==board[i][3] and board[i][0]!='#':
+##            return board[i][0]
+##        elif board[0][i]==board[1][i]==board[2][i]==board[3][i] and board[0][i]!='#':
+##            return board[i][0]
     return '#'
 
 '''move(board, sq, marker) will alter the board 'board' at square 'sq' to marker 'marker'.'''
 def move(board,sq,marker):
     num=len(board)
     board[sq/num][sq%num]=marker
-##    if sq<4 and board[0][sq]=='#':
-##        board[0][sq]=marker
-##        return True
-##    elif sq<8 and sq>=4 and board[1][sq-4]=='#':
-##        board[1][sq-4]=marker
-##        return True
-##    elif sq<12 and sq>=8 and board[2][sq-8]=='#':
-##        board[2][sq-8]=marker
-##        return True
-##    elif sq<16 and sq>=12 and board[3][sq-12]=='#':
-##        board[3][sq-12]=marker
-##        return True
-##    else:
-##        print "ERROR: Invalid input"
-##        return False
 
 '''print_help(turn,players) will print a diagram of which numbers \
 corespond to which squares as well as who's turn it is.'''
@@ -114,7 +117,6 @@ def print_help(turn,players,board):
                 print " "+str(sq),
             if sq%num!=num-1: print '|',
         if i<num-1: print line
-    #print"  0 |  1 |  2 |  3 \n"+line+"  4 |  5 |  6 |  7 \n"+line+"  8 |  9 | 10 | 11 \n"+line+" 12 | 13 | 14 | 15 \n"
     if turn=='x':
         player=players[0]
     else:
@@ -124,10 +126,6 @@ def print_help(turn,players,board):
 '''play() will start and maintain a game of tic-tac-toe'''
 def play():
     #game set up
-    rows=4
-    columns=4
-    #ingame_board=create_board(rows,columns)
-    ingame_turn='x'
     ingame_players=["player1","player2"]
     player0_wins=0
     player1_wins=0
@@ -150,35 +148,12 @@ def play():
         #get player names
         ingame_players[0]=raw_input("Name of first player: ")
         ingame_players[1]=raw_input("Name of second player: ")
-##        #get number of rows and columns
-##        choosing=True
-##        while(choosing):
-##            tmp_rows=raw_input("Number of rows: ")
-##            try:
-##                if int(tmp_rows)>=3 and int(tmp_rows)<=100:
-##                    rows=tmp_rows
-##                    choosing=False
-##                else:
-##                    print "ERROR: Enter a number between 3 and 100"
-##            except:
-##                print "ERROR: Enter an integer"
-##        choosing=True
-##        while(choosing):
-##            tmp_cols=raw_input("Number of columns: ")
-##            try:
-##                if int(tmp_cols)>=3 and int(tmp_cols)<=100:
-##                    columns=tmp_cols
-##                    choosing=False
-##                else:
-##                    print "ERROR: Enter a number between 3 and 100"
-##            except:
-##                print "ERROR: Enter an integer"
-##        ingame_board=create_board(rows,columns)
         playerX=random.choice(ingame_players)
         if playerX==ingame_players[0]:
             playerO=ingame_players[1]
         else:
             playerO=ingame_players[0]
+        ingame_turn='x'
 
 
     #main game loop
@@ -205,9 +180,12 @@ def play():
                 try:
                     choice=int(choice)
                     #make a move
-                    if choice>=0 and choice<=num*num-1:
-                        if move(ingame_board,choice,ingame_turn):
+                    if choice>=0 and choice<num*num:
+                        if ingame_board[choice/num][choice%num]=="#":
+                            move(ingame_board,choice,ingame_turn)
                             active_turn=False
+                        else:
+                            print "ERROR: Space taken"
                     else:
                         print "ERROR: Enter a number between 0 and 15"
                 except:
@@ -260,7 +238,7 @@ def play():
             #change turns
             if ingame_turn=='x':
                 ingame_turn='o'
-            elif ingame_turn=='o':
+            else:
                 ingame_turn='x'
                 
         #playerX congrats
@@ -282,7 +260,6 @@ def play():
             print "Game over, draw."
             draws+=1
         ingame_turn='x'
-        ingame_board=[['#' for col in range(4)] for row in range(4)]
 
 #GAME STARTER
 play()
