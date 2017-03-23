@@ -1,13 +1,13 @@
 #*******************************************************************
 #
-#  Program:     Project 3
+#  Program:     Project 4
 #
 #  Author:      Trent Thompson
 #  Email:       tt948912@ohio.edu
 #
-#  Description: brief description of the program
+#  Description: Tic-tac-toe with variable board sizes
 #
-#  Date:        Febuary 28, 2017
+#  Date:        March 21th, 2017
 #
 #*******************************************************************
 
