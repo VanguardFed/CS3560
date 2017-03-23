@@ -108,9 +108,13 @@ def move(board,sq,marker):
 corespond to which squares as well as who's turn it is.'''
 def print_help(turn,players,board):
     num=len(board)
+    #print first line
     line="\n"+"------"*num
+    #rows for loop
     for i in range(0,num):
+        #columns for loop
         for j in range(0,num):
+            #print the square number
             sq=i*num+j%num
             if sq<10:
                 print "  "+str(sq),
@@ -118,6 +122,7 @@ def print_help(turn,players,board):
                 print " "+str(sq),
             if sq%num!=num-1: print '|',
         if i<num-1: print line
+    #print who's turn it is
     if turn=='x':
         player=players[0]
     else:
@@ -162,6 +167,7 @@ def play():
     while not quit:
         #get number of rows and columns
         choosing=True
+        #while loop for getting board size
         while(choosing):
             tmp_num=raw_input("Number of rows and columns: ")
             try:
@@ -173,8 +179,10 @@ def play():
             except:
                 print "ERROR: Enter an integer"
         ingame_board=create_board(num)
+        #while loop for game duration
         while who_won(ingame_board)=='#':
             active_turn=True
+            #while loop for turn duration
             while active_turn:
                 num=len(ingame_board)
                 choice=raw_input()
