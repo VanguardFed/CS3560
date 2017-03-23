@@ -64,38 +64,39 @@ def print_piece(piece, line):
     else:
         return "         "
 
+'''create_board(n) will generate a square board with 'n' number of rows and columns.'''
 def create_board(n):
-    return [['#' for i in range(int(n))] for i in range(int(n))]
+    return [['#' for i in range(n)] for i in range(n))]
 
 '''who_won(board) will return either 'x' or 'o' if either has a winning position, otherwise it will return '#'.'''
 def who_won(board):
     num=len(board)
     for i in range(0,num):
         for j in range(0,num):
+            #check for verticle win
             try:
                 if board[i][j]!=board[i][j+1]:
                     break
             except:
                 return board[i][j]
+            #check for horizontal win
             try:
                 if board[j][i]!=board[j+1][i]:
                     break
             except:
                 return board[j][i]
+            #check for left-to-right diagonal win
             try:
                 if board[i][i]!=board[i+1][i+1]:
                     break
             except:
                 return board[i][i]
-##    if board[0][0]==board[1][1]==board[2][2]==board[3][3] and board[0][0]!='#':
-##        return board[0][0]
-##    elif board[0][3]==board[1][2]==board[2][1]==board[3][0] and board[0][3]!='#':
-##        return board[0][0]
-##    for i in range(0,4):
-##        if board[i][0]==board[i][1]==board[i][2]==board[i][3] and board[i][0]!='#':
-##            return board[i][0]
-##        elif board[0][i]==board[1][i]==board[2][i]==board[3][i] and board[0][i]!='#':
-##            return board[i][0]
+            #check for left-to-right diagonal win
+            try:
+                if board[num-i][i]!=board[num-i+1][i+1]:
+                    break
+            except:
+                return board[i][i]
     return '#'
 
 '''move(board, sq, marker) will alter the board 'board' at square 'sq' to marker 'marker'.'''
